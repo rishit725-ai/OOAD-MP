@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Task Assignment — DRCP</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="bg-dark text-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container mt-5 pt-3" style="max-width:900px">
+    <div class="d-flex align-items-center mb-4">
+        <a href="/tasks" class="btn btn-outline-secondary me-3"><i class="bi bi-arrow-left"></i></a>
+        <div>
+            <h2 class="fw-bold mb-0"><i class="bi bi-person-check text-warning"></i> Task Assignment</h2>
+            <p class="text-secondary small mb-0">Strategy Pattern — choose your assignment algorithm</p>
+        </div>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Strategy Explanation -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-exclamation-triangle fs-2"></i>
+                    <h6 class="mt-2">Severity-Based</h6>
+                    <p class="small mb-0">CRITICAL/HIGH → largest team. MEDIUM/LOW → smallest sufficient team.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-dark h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-geo-alt fs-2"></i>
+                    <h6 class="mt-2">Proximity-Based</h6>
+                    <p class="small mb-0">Selects nearest team using Haversine formula on GPS coordinates.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-bar-chart fs-2"></i>
+                    <h6 class="mt-2">Resource-Based</h6>
+                    <p class="small mb-0">Selects team with lowest load ratio (most available capacity).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Auto Assignment -->
+        <div class="col-md-6">
+            <div class="card bg-secondary shadow h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-robot"></i> Auto-Assign (Strategy Pattern)</h5>
+                </div>
+                <div class="card-body">
+                    <form action="/tasks/auto-assign" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Incident *</label>
+                            <select name="incidentId" class="form-select bg-dark text-light border-secondary" required>
+                                <option value="">-- Choose Active Incident --</option>
+                                <option th:each="inc : ${incidents}"
+                                        th:value="${inc.id}"
+                                        th:text="${inc.severity.displayName + ' | ' + inc.title}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Assignment Strategy *</label>
+                            <select name="strategy" class="form-select bg-dark text-light border-secondary" required>
+                                <option th:each="s : ${strategies}"
+                                        th:value="${s[0]}"
+                                        th:text="${s[1]}"></option>
+                            </select>
+                        </div>
+                        <div class="alert alert-info small">
+                            <i class="bi bi-info-circle"></i>
+                            The system will auto-select the best team from available teams using your chosen strategy.
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">
+                            <i class="bi bi-lightning"></i> Auto-Assign Best Team
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual Assignment -->
+        <div class="col-md-6">
+            <div class="card bg-secondary shadow h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-person-fill-check"></i> Manual Assignment</h5>
+                </div>
+                <div class="card-body">
+                    <form action="/tasks/manual-assign" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Incident *</label>
+                            <select name="incidentId" class="form-select bg-dark text-light border-secondary" required>
+                                <option value="">-- Choose Active Incident --</option>
+                                <option th:each="inc : ${incidents}"
+                                        th:value="${inc.id}"
+                                        th:text="${inc.severity.displayName + ' | ' + inc.title}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Team *</label>
+                            <select name="teamId" class="form-select bg-dark text-light border-secondary" required>
+                                <option value="">-- Choose Available Team --</option>
+                                <option th:each="team : ${teams}"
+                                        th:value="${team.id}"
+                                        th:text="${team.name + ' (' + team.teamType.displayName + ' | Cap: ' + team.availableCapacity + ')'}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Strategy (for logging)</label>
+                            <select name="strategy" class="form-select bg-dark text-light border-secondary">
+                                <option th:each="s : ${strategies}"
+                                        th:value="${s[0]}"
+                                        th:text="${s[1]}"></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 mt-2">
+                            <i class="bi bi-person-check"></i> Assign Selected Team
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Teams Summary -->
+    <div class="card bg-secondary shadow mt-4">
+        <div class="card-header"><h5 class="mb-0"><i class="bi bi-people"></i> Available Teams</h5></div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0">
+                    <thead><tr><th>Team</th><th>Type</th><th>Location</th><th>Available Cap.</th></tr></thead>
+                    <tbody>
+                        <tr th:each="team : ${teams}">
+                            <td th:text="${team.name}"></td>
+                            <td><span class="badge bg-primary" th:text="${team.teamType.displayName}"></span></td>
+                            <td class="small text-secondary" th:text="${team.location}"></td>
+                            <td>
+                                <span class="badge bg-success" th:text="${team.availableCapacity}"></span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(teams)}">
+                            <td colspan="4" class="text-center text-danger py-3">
+                                <i class="bi bi-exclamation-triangle"></i> No available teams!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

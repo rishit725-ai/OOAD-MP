@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'Incident: ' + ${incident.title} + ' — DRCP'">Incident</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="bg-dark text-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container-fluid mt-5 pt-3">
+    <div class="d-flex align-items-center mb-4">
+        <a href="/incidents" class="btn btn-outline-secondary me-3"><i class="bi bi-arrow-left"></i></a>
+        <h2 class="fw-bold mb-0" th:text="${incident.title}"></h2>
+        <span th:class="'badge ms-3 fs-6 bg-' + ${incident.severity.bootstrapColor}"
+              th:text="${incident.severity.displayName}"></span>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row g-3">
+        <!-- Incident Details -->
+        <div class="col-md-8">
+            <div class="card bg-secondary shadow mb-3">
+                <div class="card-header"><h5 class="mb-0"><i class="bi bi-info-circle"></i> Incident Details</h5></div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="text-secondary small">Status</div>
+                            <span th:class="'badge bg-' + ${incident.status.bootstrapColor} + ' fs-6'"
+                                  th:text="${incident.status.displayName}"></span>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-secondary small">Severity</div>
+                            <span th:class="'badge bg-' + ${incident.severity.bootstrapColor} + ' fs-6'"
+                                  th:text="${incident.severity.displayName}"></span>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-secondary small">Location</div>
+                            <div th:text="${incident.location}"></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-secondary small">Reported By</div>
+                            <div th:text="${incident.reportedBy ?: 'Unknown'}"></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-secondary small">Reported At</div>
+                            <div th:text="${#temporals.format(incident.reportedAt, 'dd MMM yyyy HH:mm')}"></div>
+                        </div>
+                        <div class="col-6" th:if="${incident.resolvedAt != null}">
+                            <div class="text-secondary small">Resolved At</div>
+                            <div th:text="${#temporals.format(incident.resolvedAt, 'dd MMM yyyy HH:mm')}"></div>
+                        </div>
+                        <div class="col-12" th:if="${incident.description}">
+                            <div class="text-secondary small">Description</div>
+                            <div th:text="${incident.description}"></div>
+                        </div>
+                        <div class="col-6" th:if="${incident.latitude != null}">
+                            <div class="text-secondary small">Coordinates</div>
+                            <div th:text="${incident.latitude + ', ' + incident.longitude}" class="font-monospace small"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assigned Tasks -->
+            <div class="card bg-secondary shadow">
+                <div class="card-header d-flex justify-content-between">
+                    <h5 class="mb-0"><i class="bi bi-list-task"></i> Assigned Teams</h5>
+                    <a th:href="@{/tasks/assign}" class="btn btn-sm btn-warning">
+                        <i class="bi bi-person-plus"></i> Assign Team
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0">
+                            <thead>
+                                <tr><th>Team</th><th>Strategy Used</th><th>Status</th><th>Assigned At</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="task : ${tasks}">
+                                    <td th:text="${task.assignedTeamName}"></td>
+                                    <td class="small text-info" th:text="${task.assignmentStrategy}"></td>
+                                    <td>
+                                        <span th:class="'badge bg-' + ${task.status.bootstrapColor}"
+                                              th:text="${task.status.displayName}"></span>
+                                    </td>
+                                    <td class="small text-secondary"
+                                        th:text="${#temporals.format(task.assignedAt, 'dd MMM HH:mm')}"></td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(tasks)}">
+                                    <td colspan="4" class="text-center text-secondary py-3">No teams assigned yet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions Panel -->
+        <div class="col-md-4">
+            <div class="card bg-secondary shadow mb-3">
+                <div class="card-header"><h5 class="mb-0"><i class="bi bi-gear"></i> Actions</h5></div>
+                <div class="card-body">
+                    <!-- Update Status -->
+                    <form th:action="@{/incidents/{id}/status(id=${incident.id})}" method="post" class="mb-3">
+                        <label class="form-label fw-bold">Update Status</label>
+                        <div class="input-group">
+                            <select name="status" class="form-select bg-dark text-light border-secondary">
+                                <option th:each="s : ${statuses}"
+                                        th:value="${s}"
+                                        th:text="${s.displayName}"
+                                        th:selected="${s == incident.status}"></option>
+                            </select>
+                            <button type="submit" class="btn btn-warning">Update</button>
+                        </div>
+                        <div class="small text-info mt-1">
+                            <i class="bi bi-info-circle"></i>
+                            Uses <strong>Command + Observer</strong> patterns
+                        </div>
+                    </form>
+
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/incidents/{id}/edit(id=${incident.id})}" class="btn btn-outline-warning">
+                            <i class="bi bi-pencil"></i> Edit Incident
+                        </a>
+                        <a href="/tasks/assign" class="btn btn-outline-info">
+                            <i class="bi bi-people"></i> Assign Team (Strategy)
+                        </a>
+                        <form th:action="@{/incidents/{id}/delete(id=${incident.id})}" method="post"
+                              onsubmit="return confirm('Delete this incident?')">
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-info bg-dark">
+                <div class="card-body small text-info">
+                    <strong>Design Patterns Active:</strong>
+                    <ul class="mb-0 mt-1">
+                        <li><strong>Observer:</strong> Status changes notify Command Center</li>
+                        <li><strong>Command:</strong> Each action is logged with undo support</li>
+                        <li><strong>Strategy:</strong> Team assignment uses selected algorithm</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

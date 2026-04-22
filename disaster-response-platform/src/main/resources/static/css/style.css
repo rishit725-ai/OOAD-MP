@@ -1,0 +1,82 @@
+/* =====================================================
+   Disaster Response Coordination Platform — Custom CSS
+   ===================================================== */
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+/* Pulse animation for critical badge */
+@keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+    70%  { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}
+.pulse-badge {
+    animation: pulse 2s infinite;
+}
+
+/* Cards */
+.card {
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Table */
+.table-dark th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Severity colour coding in text */
+.severity-critical { color: #dc3545; }
+.severity-high     { color: #ffc107; }
+.severity-medium   { color: #0dcaf0; }
+.severity-low      { color: #198754; }
+
+/* Form controls dark theme */
+.form-control:focus,
+.form-select:focus {
+    border-color: #0dcaf0;
+    box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, 0.15);
+}
+
+/* Progress bar */
+.progress {
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* Scrollable cards */
+.scroll-y {
+    overflow-y: auto;
+}
+
+/* Badge font size consistency */
+.badge {
+    font-size: 0.75rem;
+}
+
+/* Monospace for IDs and coords */
+.font-monospace {
+    font-family: 'Courier New', monospace;
+}
+
+/* Pattern info boxes */
+.pattern-box {
+    border-left: 3px solid;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0;
+    font-size: 0.85rem;
+}
+.pattern-box.strategy { border-color: #ffc107; }
+.pattern-box.observer { border-color: #0dcaf0; }
+.pattern-box.command  { border-color: #198754; }
+.pattern-box.factory  { border-color: #6f42c1; }
+.pattern-box.facade   { border-color: #fd7e14; }

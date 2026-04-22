@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shelter Form — DRCP</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="bg-dark text-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container mt-5 pt-4" style="max-width:700px">
+    <div class="d-flex align-items-center mb-4">
+        <a href="/shelters" class="btn btn-outline-secondary me-3"><i class="bi bi-arrow-left"></i></a>
+        <h2 class="fw-bold mb-0">
+            <i class="bi bi-house-heart text-info"></i>
+            <span th:if="${shelter.id == null}">Add Shelter</span>
+            <span th:if="${shelter.id != null}">Edit Shelter</span>
+        </h2>
+    </div>
+    <div class="card bg-secondary shadow">
+        <div class="card-body">
+            <form th:action="${shelter.id == null ? '/shelters/new' : '/shelters/' + shelter.id + '/edit'}"
+                  th:object="${shelter}" method="post">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold">Shelter Name *</label>
+                        <input type="text" th:field="*{name}" class="form-control bg-dark text-light border-secondary"
+                               placeholder="e.g. City Sports Complex" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Status</label>
+                        <select th:field="*{status}" class="form-select bg-dark text-light border-secondary">
+                            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.displayName}"></option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Location *</label>
+                        <input type="text" th:field="*{location}" class="form-control bg-dark text-light border-secondary"
+                               placeholder="e.g. Kanteerava Indoor Stadium, Central" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Latitude</label>
+                        <input type="number" step="0.0001" th:field="*{latitude}" class="form-control bg-dark text-light border-secondary">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Longitude</label>
+                        <input type="number" step="0.0001" th:field="*{longitude}" class="form-control bg-dark text-light border-secondary">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Capacity *</label>
+                        <input type="number" th:field="*{capacity}" class="form-control bg-dark text-light border-secondary" min="1" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Current Occupancy</label>
+                        <input type="number" th:field="*{currentOccupancy}" class="form-control bg-dark text-light border-secondary" min="0">
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Contact Person</label>
+                        <input type="text" th:field="*{contactPerson}" class="form-control bg-dark text-light border-secondary">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Contact Phone</label>
+                        <input type="text" th:field="*{contactPhone}" class="form-control bg-dark text-light border-secondary">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Amenities</label>
+                        <div class="d-flex gap-4">
+                            <div class="form-check">
+                                <input type="checkbox" th:field="*{hasFood}" class="form-check-input" id="hasFood">
+                                <label class="form-check-label" for="hasFood"><i class="bi bi-basket"></i> Food</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" th:field="*{hasMedical}" class="form-check-input" id="hasMedical">
+                                <label class="form-check-label" for="hasMedical"><i class="bi bi-heart-pulse"></i> Medical</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" th:field="*{hasPower}" class="form-check-input" id="hasPower">
+                                <label class="form-check-label" for="hasPower"><i class="bi bi-lightning"></i> Power</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 d-flex justify-content-between">
+                        <a href="/shelters" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-info text-dark px-4">
+                            <i class="bi bi-save"></i>
+                            <span th:if="${shelter.id == null}">Add Shelter</span>
+                            <span th:if="${shelter.id != null}">Save Changes</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

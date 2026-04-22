@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Equipment — DRCP</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="bg-dark text-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container-fluid mt-5 pt-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold"><i class="bi bi-tools text-warning"></i> Equipment Management</h2>
+            <span class="badge bg-success me-1" th:text="${availableCount + ' available'}"></span>
+            <span class="badge bg-warning text-dark" th:text="${inUseCount + ' in use'}"></span>
+        </div>
+        <a href="/equipment/new" class="btn btn-warning text-dark"><i class="bi bi-plus-circle"></i> Add Equipment</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card bg-secondary shadow">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0">
+                    <thead class="table-secondary text-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Model</th>
+                            <th>Status</th>
+                            <th>Qty Available</th>
+                            <th>Assigned Team</th>
+                            <th>Location</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="gear : ${equipmentList}">
+                            <td th:text="${gear.id}" class="text-secondary"></td>
+                            <td class="fw-bold" th:text="${gear.name}"></td>
+                            <td><span class="badge bg-secondary" th:text="${gear.category}"></span></td>
+                            <td class="small text-secondary" th:text="${gear.model}"></td>
+                            <td>
+                                <span th:class="'badge bg-' + ${gear.status.bootstrapColor}"
+                                      th:text="${gear.status.displayName}"></span>
+                            </td>
+                            <td th:text="${gear.availableQuantity + ' / ' + gear.quantity}"></td>
+                            <td class="small" th:text="${gear.assignedTeamName}"></td>
+                            <td class="small text-secondary" th:text="${gear.storageLocation}"></td>
+                            <td>
+                                <a th:href="@{/equipment/{id}/edit(id=${gear.id})}" class="btn btn-sm btn-outline-warning me-1">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form th:action="@{/equipment/{id}/release(id=${gear.id})}" method="post" class="d-inline me-1"
+                                      th:if="${gear.assignedTeam != null}">
+                                    <button type="submit" class="btn btn-sm btn-outline-info" title="Release">
+                                        <i class="bi bi-arrow-return-left"></i>
+                                    </button>
+                                </form>
+                                <form th:action="@{/equipment/{id}/delete(id=${gear.id})}" method="post" class="d-inline"
+                                      onsubmit="return confirm('Delete?')">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(equipmentList)}">
+                            <td colspan="9" class="text-center text-secondary py-5">No equipment registered</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

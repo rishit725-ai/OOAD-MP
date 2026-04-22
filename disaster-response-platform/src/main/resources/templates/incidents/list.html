@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Incidents — DRCP</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="bg-dark text-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container-fluid mt-5 pt-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold"><i class="bi bi-exclamation-triangle text-danger"></i> Incident Management</h2>
+            <span class="badge bg-danger" th:text="${activeCount + ' active'}"></span>
+        </div>
+        <a href="/incidents/new" class="btn btn-danger"><i class="bi bi-plus-circle"></i> Report Incident</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card bg-secondary shadow">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0">
+                    <thead class="table-secondary text-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Severity</th>
+                            <th>Title</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Reported</th>
+                            <th>Reporter</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="inc : ${incidents}">
+                            <td th:text="${inc.id}" class="text-secondary"></td>
+                            <td>
+                                <span th:class="'badge bg-' + ${inc.severity.bootstrapColor}"
+                                      th:text="${inc.severity.displayName}"></span>
+                            </td>
+                            <td>
+                                <a th:href="@{/incidents/{id}(id=${inc.id})}" class="text-light text-decoration-none fw-bold"
+                                   th:text="${inc.title}"></a>
+                            </td>
+                            <td class="small text-secondary" th:text="${inc.location}"></td>
+                            <td>
+                                <span th:class="'badge bg-' + ${inc.status.bootstrapColor}"
+                                      th:text="${inc.status.displayName}"></span>
+                            </td>
+                            <td class="small text-secondary"
+                                th:text="${#temporals.format(inc.reportedAt, 'dd MMM HH:mm')}"></td>
+                            <td class="small" th:text="${inc.reportedBy}"></td>
+                            <td>
+                                <a th:href="@{/incidents/{id}(id=${inc.id})}" class="btn btn-sm btn-outline-info me-1">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{/incidents/{id}/edit(id=${inc.id})}" class="btn btn-sm btn-outline-warning me-1">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form th:action="@{/incidents/{id}/delete(id=${inc.id})}" method="post" class="d-inline"
+                                      onsubmit="return confirm('Delete this incident?')">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(incidents)}">
+                            <td colspan="8" class="text-center text-secondary py-5">
+                                <i class="bi bi-check-circle fs-1"></i><br>No incidents recorded
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
