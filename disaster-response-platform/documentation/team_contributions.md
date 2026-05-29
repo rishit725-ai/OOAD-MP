@@ -4,14 +4,14 @@
 
 | Member | Use Cases Owned | Design Pattern | Design Principle |
 |--------|----------------|----------------|-----------------|
-| 455 | UC1 (Incident Management), UC6 (Command Center) | Observer Pattern | SRP |
-| T | UC2 (Team Management) | Factory Pattern | LSP |
-| 480 | UC3 (Shelter Management) | Facade Pattern | OCP |
-| 462 | UC4 (Equipment Management), UC5 (Task Assignment) | Strategy + Command Patterns | DRY + Law of Demeter |
+| Purujit Suresh | UC1 (Incident Management), UC6 (Command Center) | Observer Pattern | SRP |
+| Thanusha Gowda | UC2 (Team Management) | Factory Pattern | LSP |
+| Rishit Jena | UC3 (Shelter Management) | Facade Pattern | OCP |
+| Rahul Gopalan | UC4 (Equipment Management), UC5 (Task Assignment) | Strategy + Command Patterns | DRY + Law of Demeter |
 
 ---
 
-## 455 — Incident Management + Command Center
+## Purujit Suresh — Incident Management + Command Center
 
 ### Major Use Case: Incident Management (UC1)
 **Files owned:**
@@ -40,7 +40,7 @@ Every class in this system has exactly one reason to change. Evidence in `Incide
 
 ---
 
-## T — Team Management
+## Thanusha Gowda — Team Management
 
 ### Major Use Case: Team Management (UC2)
 **Files owned:**
@@ -64,7 +64,7 @@ All ResponseTeam subclasses are fully substitutable for ResponseTeam. Strategies
 
 ---
 
-## 480 — Shelter Management
+## Rishit Jena — Shelter Management
 
 ### Major Use Case: Shelter Management (UC3)
 **Files owned:**
@@ -87,7 +87,7 @@ New assignment strategies, new observer types, and new team types can all be add
 
 ---
 
-## 462 — Equipment + Task Assignment
+## Rahul Gopalan — Equipment + Task Assignment
 
 ### Major Use Case: Equipment Management (UC4)
 **Files owned:**
